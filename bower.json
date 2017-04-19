@@ -1,6 +1,6 @@
 {
     "name": "angular-geofence",
-    "homepage": "http://git.bls.net.in/s.hetal/angular-geofence.git",
+    "homepage": "https://github.com/hetal393/angular-geofence.git",
     "ignore":[
     	"**/.**",
     	"node_modules",
