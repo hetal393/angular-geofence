@@ -1,5 +1,6 @@
 {
     "name": "angular-geofence",
+    "version": "0.0.1",
     "homepage": "https://github.com/hetal393/angular-geofence.git",
     "ignore":[
     	"**/.**",
