@@ -3,7 +3,7 @@
 	    <div class="col-md-3">
 		    <div class="well sidebar-nav">
 		        <div class="panel-group" id="accordion" ng-repeat="zone in zones track by $index" style="margin-bottom:5px">
-		            <div class="panel panel-default">
+		            <div class="panel panel-default" ng-style="{'border-color': zone.editMode?'#e80b0b' : '#ddd'}">
 		                <div class="panel-heading" data-toggle="collapse" data-target="#{{$index}}">
 		                    <span>{{zone.name}}</span>
 		                    <span class="pull-right" ng-click="removeArea(zone, $index);$event.stopPropagation()"><i class="glyphicon glyphicon-remove"></i></span>

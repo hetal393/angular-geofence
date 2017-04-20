@@ -340,6 +340,12 @@ angular.module('geoFence', [])
                             obj.setDraggable(false);
                         }
                     })
+                    $scope.zones.forEach((obj, index)=>{
+                        if(index == indexes)
+                            obj.editMode = true;
+                        else
+                            obj.editMode = false;
+                    })
                 }
 
 
