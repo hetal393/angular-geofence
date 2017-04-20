@@ -9,7 +9,7 @@ angular.module('geoFence', [])
                 sideArea: "=sideArea",
                 geoMap: "=geoMap"
             },
-            templateUrl: "partials/directives/geofencing/geofence.html",
+            templateUrl: "bower_components/angular-geofence/angular-geofence.html",
             controller: ['$scope', '$timeout', function($scope, $timeout, $watch) {
 
                 // googlemap variables //
