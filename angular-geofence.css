@@ -1,5 +1,5 @@
 #map{
-    height: 650px;
+    height: 650px !important;
 }
 
 .controls {
@@ -113,4 +113,11 @@
 @keyframes fadeout {
     from {bottom: 30px; opacity: 1;}
     to {bottom: 0; opacity: 0;}
+}
+
+.well{
+  overflow-y: auto;
+  height: 649px;
+  padding: 8px 4px;
+  overflow-x: hidden;
 }
