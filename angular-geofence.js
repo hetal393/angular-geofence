@@ -267,6 +267,7 @@ angular.module('geoFence', [])
                     defaultShape.setDraggable(false);
                     $scope.temp.currentAreaName = "";
                     defaultShape.setMap(null);
+                    drawingManager.setDrawingMode(null);
                     //to show the saved shapes
                     $scope.zones.forEach((zone, $index) => {
                         var shape1 = makePartnerShape(zone, false);
