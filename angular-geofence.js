@@ -9,7 +9,7 @@ angular.module('geoFence', [])
                 sideArea: "=sideArea",
                 geoMap: "=geoMap"
             },
-            templateUrl: "bower_components/angular-geofence/angular-geofence.html",
+            templateUrl: "partials/directives/geofencing/geofence.html",
             controller: ['$scope', '$timeout', function($scope, $timeout, $watch) {
 
                 // googlemap variables //
@@ -22,6 +22,12 @@ angular.module('geoFence', [])
                 var userOverlays = []; //to draw and hide the shape
                 $scope.lat = 19.119126;
                 $scope.lng = 72.890775;
+
+                const lineSymbol = {
+                    path: 'M 0,-1 0,1',
+                    strokeOpacity: 1,
+                    scale: 3
+                }
 
 
                 $scope.showMap = function() {
@@ -43,7 +49,7 @@ angular.module('geoFence', [])
                     if ($scope.zones.length >= 1) {
                         drawPartnerShapes();
                     }
-                    if($scope.boundaries.length >= 1) {
+                    if ($scope.boundaries.length >= 1) {
                         drawUserShapes();
                     }
                     if ($scope.geoMap.partneraddress && $scope.sideArea) {
@@ -55,9 +61,11 @@ angular.module('geoFence', [])
                         $scope.lng = $scope.geoMap.lng;
                     }
                     map.setCenter({ lat: $scope.lat, lng: $scope.lng });
-                    google.maps.event.trigger(map, 'resize');
+                    $timeout(function() {
+                        google.maps.event.trigger(map, 'resize');
+                    }, 1000);
                     // Create the search box and link it to the UI element.
-                    if($scope.sideArea){
+                    if ($scope.sideArea) {
                         var input = document.getElementById('pac-input');
                         var searchBox = new google.maps.places.SearchBox(input);
                         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
@@ -261,13 +269,12 @@ angular.module('geoFence', [])
                     }
                 }
 
-                function addCurrentShape(shape){
+                function addCurrentShape(shape) {
                     $scope.zones.push(shape);
                     defaultShape.setEditable(false);
                     defaultShape.setDraggable(false);
                     $scope.temp.currentAreaName = "";
                     defaultShape.setMap(null);
-                    drawingManager.setDrawingMode(null);
                     //to show the saved shapes
                     $scope.zones.forEach((zone, $index) => {
                         var shape1 = makePartnerShape(zone, false);
@@ -286,17 +293,24 @@ angular.module('geoFence', [])
                     if (defaultShape) {
                         var shapeFeature = setShapeData(defaultShape);
                         shapeFeature.name = $scope.temp.currentAreaName;
-                        if($scope.boundaries.length > 0){ //for userinfo
+                        if ($scope.boundaries.length > 0) { //for userinfo
                             let shapeExist = false;
                             let tempObj = checkIfInside(shapeFeature, shapeExist, defaultShape);
                             shapeExist = tempObj.exist;
                             original_geometry = tempObj.geometry;
-                            if(shapeExist == true){
-                                if(original_geometry.length)
+                            if (shapeExist == true) {
+                                if (original_geometry.length)
                                     shapeFeature.geometry = original_geometry; // storing original circle geometry
                                 addCurrentShape(shapeFeature);
                             }
-                        }else{
+                            if (shapeExist == false) {
+                                defaultShape.setDraggable(true);
+                                defaultShape.setEditable(true);
+                                var x = document.getElementById("shapeAlert")
+                                x.className = "show";
+                                $timeout(function() { x.className = x.className.replace("show", ""); }, 2000);
+                            }
+                        } else {
                             addCurrentShape(shapeFeature);
                         }
                     }
@@ -332,23 +346,40 @@ angular.module('geoFence', [])
                 $scope.updateArea = function(areaObj, index) {
                     overlays[index].type = areaObj.type;
                     var updatedShape = setShapeData(overlays[index]);
-                    if($scope.boundaries.length > 0){
+                    if ($scope.boundaries.length > 0) {
                         var shapeExist = false;
                         var tempObj = checkIfInside(updatedShape, shapeExist, overlays[index]);
                         shapeExist = tempObj.exist;
                         original_geometry = tempObj.geometry;
-                        if(shapeExist == true){
+                        if (shapeExist == true) {
                             updatedShape.geometry = original_geometry;
                             overlays[index].setMap(map);
+                            overlays[index].setDraggable(false);
+                            overlays[index].setEditable(false);
+                            $scope.zones[index] = updatedShape;
+                            $scope.zones[index].name = areaObj.name;
+                            var x = document.getElementById("shapeUpdate")
+                            x.className = "show";
+                            $timeout(function() { x.className = x.className.replace("show", ""); }, 2000);
                         }
+                        if (shapeExist == false) {
+                            updatedShape.geometry = original_geometry;
+                            overlays[index].setDraggable(true);
+                            overlays[index].setEditable(true);
+                            overlays[index].setMap(map);
+                            var x = document.getElementById("shapeAlert")
+                            x.className = "show";
+                            $timeout(function() { x.className = x.className.replace("show", ""); }, 2000);
+                        }
+                    } else {
+                        overlays[index].setDraggable(false);
+                        overlays[index].setEditable(false);
+                        $scope.zones[index] = updatedShape;
+                        $scope.zones[index].name = areaObj.name;
+                        var x = document.getElementById("shapeUpdate")
+                        x.className = "show";
+                        $timeout(function() { x.className = x.className.replace("show", ""); }, 2000);
                     }
-                    overlays[index].setDraggable(false);
-                    overlays[index].setEditable(false);
-                    $scope.zones[index] = updatedShape;
-                    $scope.zones[index].name = areaObj.name;
-                    var x = document.getElementById("shapeUpdate")
-                    x.className = "show";
-                    $timeout(function() { x.className = x.className.replace("show", ""); }, 2000);
                 }
 
                 $scope.showMap();
@@ -364,14 +395,14 @@ angular.module('geoFence', [])
                     //This gets called when data changes.
                 });
 
-                $scope.clearInput = function(){
-                    if(defaultShape)
-                        defaultShape.setMap(null);
-                    $scope.temp.currentAreaName = "";
-                    $scope.temp.search = "";
-                    clearMarkers();
-                }
-                //------------User Info---------------------------//
+                $scope.clearInput = function() {
+                        if (defaultShape)
+                            defaultShape.setMap(null);
+                        $scope.temp.currentAreaName = "";
+                        $scope.temp.search = "";
+                        clearMarkers();
+                    }
+                    //------------User Info---------------------------//
 
                 function drawUserShapes() {
                     $scope.boundaries.forEach((boundary, $index) => {
@@ -413,57 +444,64 @@ angular.module('geoFence', [])
                     //convert to polyline
                     if (shapeObj.type == 'polygon') {
 
-                        userOverlays.push(new google.maps.Polygon({paths:shapeObj.geometry}));
+                        userOverlays.push(new google.maps.Polygon({ paths: shapeObj.geometry }));
                         //one extra here makes sure we connect the path
                         var polyGeometry = angular.copy(shapeObj.geometry);
                         polyGeometry.push(shapeObj.geometry[0]);
                         return new google.maps.Polyline({
                             path: polyGeometry,
-                            strokeColor: '#FF0000',
-                            strokeOpacity: 1.0,
-                            strokeWeight: 2
+                            strokeColor: 'blue',
+                            strokeOpacity: 0,
+                            strokeWeight: 2,
+                            icons: [{
+                                icon: lineSymbol,
+                                offset: '0',
+                                repeat: '15px'
+                            }]
                         });
                     } else if (shapeObj.type == 'circle') {
-                        userOverlays.push(new google.maps.Circle({center:shapeObj.geometry[0], radius:shapeObj.properties.radius}))
+                        userOverlays.push(new google.maps.Circle({ center: shapeObj.geometry[0], radius: shapeObj.properties.radius }))
                         return new google.maps.Polyline({
                             path: drawCircle(shapeObj.geometry[0], shapeObj.properties.radius / 1610, 1),
-                            strokeColor: 'green',
-                            strokeOpacity: 1.0,
-                            strokeWeight: 2
+                            strokeColor: 'blue',
+                            strokeOpacity: 0,
+                            strokeWeight: 2,
+                            icons: [{
+                                icon: lineSymbol,
+                                offset: '0',
+                                repeat: '15px'
+                            }]
                         });
                     }
                 }
 
-                function checkIfInside(shape, shapeExist, overlayObj){
+                function checkIfInside(shape, shapeExist, overlayObj) {
                     var original_geometry = [];
                     original_geometry = shape.geometry; // storing original circle geometry
-                    if(shape.type == 'circle'){ //converting circle to polyline to check whether it is inside the shape
+                    if (shape.type == 'circle') { //converting circle to polyline to check whether it is inside the shape
                         let polyCircle = new google.maps.Polyline({
-                            path: drawCircle(shape.geometry[0], shape.properties.radius / 1610, 1)});
+                            path: drawCircle(shape.geometry[0], shape.properties.radius / 1610, 1)
+                        });
                         let tempArray = polyCircle.getPath().getArray();
-                        let polyCircleCoords = tempArray.map(obj=>{
-                            return {lat:obj.lat(), lng:obj.lng()}
+                        let polyCircleCoords = tempArray.map(obj => {
+                            return { lat: obj.lat(), lng: obj.lng() }
                         });
                         shape.geometry = polyCircleCoords; // polyline geometry
                     }
-                    for(var i=0; i< $scope.boundaries.length ;i++){ //loop to check if shape is inside or outside
+                    for (var i = 0; i < $scope.boundaries.length; i++) { //loop to check if shape is inside or outside
                         if (i > 0 && shapeExist == true)
                             break;
-                        for (var j=0;j<shape.geometry.length;j++){
+                        for (var j = 0; j < shape.geometry.length; j++) {
                             var latlng = new google.maps.LatLng(shape.geometry[j].lat, shape.geometry[j].lng);
-                            if($scope.boundaries[i].type == 'polygon'){
-                                shapeExist = google.maps.geometry.poly.containsLocation(latlng, userOverlays[i])? true: false
-                                if(shapeExist == false){
-                                    $scope.temp.currentAreaName = "";
-                                    overlayObj.setMap(null);
+                            if ($scope.boundaries[i].type == 'polygon') {
+                                shapeExist = google.maps.geometry.poly.containsLocation(latlng, userOverlays[i]) ? true : false
+                                if (shapeExist == false) {
                                     break;
                                 }
                             }
-                            if($scope.boundaries[i].type == 'circle'){
-                                shapeExist = userOverlays[i].getBounds().contains(latlng)? true : false
-                                if(shapeExist == false){
-                                    $scope.temp.currentAreaName = "";
-                                    overlayObj.setMap(null);
+                            if ($scope.boundaries[i].type == 'circle') {
+                                shapeExist = userOverlays[i].getBounds().contains(latlng) ? true : false
+                                if (shapeExist == false) {
                                     break;
                                 }
                             }
@@ -471,7 +509,7 @@ angular.module('geoFence', [])
                     }
                     var temp = {
                         geometry: original_geometry,
-                        exist: shapeExist 
+                        exist: shapeExist
                     };
                     return temp;
                 }
