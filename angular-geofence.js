@@ -1,12 +1,12 @@
 angular.module('geoFence', [])
     .directive('ngGeofence', function() {
         return {
-            restrict: 'EA',
+            restrict: 'E',
             scope: {
                 zones: "=zones",
                 marker: "=",
                 boundaries: "=boundaries",
-                sideArea: "=sideArea",
+                isZone: "=isZone",
                 geoMap: "=geoMap"
             },
             templateUrl: "bower_components/angular-geofence/angular-geofence.html",
@@ -22,6 +22,12 @@ angular.module('geoFence', [])
                 var userOverlays = []; //to draw and hide the shape
                 $scope.lat = 19.119126;
                 $scope.lng = 72.890775;
+                if(!$scope.zones)
+                    $scope.zones = [];
+                if(!$scope.boundaries)
+                    $scope.boundaries = [];
+                if($scope.isZone == undefined)
+                    $scope.isZone = true;
 
                 const lineSymbol = {
                     path: 'M 0,-1 0,1',
@@ -52,7 +58,7 @@ angular.module('geoFence', [])
                     if ($scope.boundaries.length >= 1) {
                         drawUserShapes();
                     }
-                    if ($scope.geoMap.partneraddress && $scope.sideArea) {
+                    if ($scope.geoMap.partneraddress && $scope.isZone) {
                         $scope.temp.selectedGmapArea = {};
                         $scope.temp.selectedGmapArea.geometry = {};
                         $scope.temp.selectedGmapArea.geometry.location = { lat: $scope.geoMap.lat, lng: $scope.geoMap.lng };
@@ -65,7 +71,7 @@ angular.module('geoFence', [])
                         google.maps.event.trigger(map, 'resize');
                     }, 1000);
                     // Create the search box and link it to the UI element.
-                    if ($scope.sideArea) {
+                    if ($scope.isZone) {
                         var input = document.getElementById('pac-input');
                         var searchBox = new google.maps.places.SearchBox(input);
                         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
@@ -391,7 +397,7 @@ angular.module('geoFence', [])
                 $scope.showMap();
 
                 $scope.$watch("boundaries", function(newValue, oldValue) {
-                    if (!$scope.sideArea) {
+                    if (!$scope.isZone) {
                         for (var j = oldValue.length; j < newValue.length; j++) {
                             var shape = makeUserShape(newValue[j]);
                             shape.setMap(map);

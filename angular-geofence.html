@@ -36,12 +36,12 @@
 		                	<div class="row" style="margin-bottom: 5px;">
 		                		<div class="col-sm-6" style="padding-right:0px">
 			                		<center>
-			                			<button style="width:100%" class="btn btn-success btn-sm" type="button" ng-click="switchToCircle()" ng-disabled="!temp.search">Circle</button>
+			                			<button style="width:100%" class="btn btn-success btn-sm" type="button" ng-click="switchToCircle()" ng-disabled="isZone && !temp.search">Circle</button>
 			                		</center>
 		                		</div>
 		                		<div class="col-sm-6" style="padding-left:0px">
 			                		<center>
-			                			<button style="width:100%" class="btn btn-warning btn-sm" type="button" ng-click="switchToPoly()" ng-disabled="!temp.search">Polygon</button>
+			                			<button style="width:100%" class="btn btn-warning btn-sm" type="button" ng-click="switchToPoly()" ng-disabled="isZone && !temp.search">Polygon</button>
 			                		</center>
 		                		</div>
 		                	</div>
@@ -64,7 +64,7 @@
 		    </div>
 	    </div>
 	    <div class="col-md-9">
-	    	<input id="pac-input" ng-show="sideArea" ng-style="{ 'border': !temp.search ? '1px solid #a94442' : '1px solid rgba(27,127,204,.8)' }" class="controls form-control" type="text" ng-model="temp.search" placeholder="Google Area" style="z-index:1051;" ng-dblclick="clearInput()">
+	    	<input id="pac-input" ng-show="isZone" ng-style="{ 'border': !temp.search ? '1px solid #a94442' : '1px solid rgba(27,127,204,.8)' }" class="controls form-control" type="text" ng-model="temp.search" placeholder="Google Area" style="z-index:1051;" ng-dblclick="clearInput()">
 			<div id="map"></div>
 			<div id="shapeAdd">Shape Saved !</div>
 			<div id="shapeUpdate">Shape Updated !</div>
