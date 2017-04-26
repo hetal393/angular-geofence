@@ -14,19 +14,28 @@ in HTML.
 
 where,
 myZones : is an array of geojson data containing areas(shapes data).
+
 myBoundaries : is an array of geojson data(myZones) which act as geofence.
+
 geoMap : is an object containing formatted_address of partners Location and its Latitude and Longitude.
+
 is-zone : is boolean value to check whether to draw shapes or geoefence.
 
 in JS file
 $scope.myZones = [];
+
 $scope.myBoundaries = [];
+
 $scope.geoMap = {};
+
 $scope.isZone = false; // set it true for PART 1
 
 Steps To Install
+
 Prerequisites.
+
 	-node.
+	
 	-npm.
 
 1) To load the google maps, you'll need to include the below script tag in your index.html
