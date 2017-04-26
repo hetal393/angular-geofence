@@ -9,7 +9,7 @@ Usage
 
 in HTML.
 
-<ng-geofence zones="myZones" boundaries="myBoundaries" geo-map="geoMap" is-zone="isZone"></ng-geofence>
+\<ng-geofence zones="myZones" boundaries="myBoundaries" geo-map="geoMap" is-zone="isZone"></ng-geofence>\
 
 where,
 myZones : is an array of geojson data containing areas(shapes data).
