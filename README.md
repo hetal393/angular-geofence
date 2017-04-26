@@ -2,7 +2,8 @@ Angular-Geofence
 
 Geofence Directive for AngularJS
 
-PART 1 : Allows you to draw custom areas using shapes like(circle/polygon) for geofencing called as zones.\n
+PART 1 : Allows you to draw custom areas using shapes like(circle/polygon) for geofencing called as zones.
+
 PART 2 : Same Zones act as boundaries inside which you can draw smaller areas.
 
 Usage
