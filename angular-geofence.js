@@ -501,8 +501,6 @@ angular.module('geoFence', [])
                         shape.geometry = polyCircleCoords; // polyline geometry
                     }
                     for (var i = 0; i < $scope.boundaries.length; i++) { //loop to check if shape is inside or outside
-                        if (i > 0 && shapeExist == true)
-                            break;
                         for (var j = 0; j < shape.geometry.length; j++) {
                             var latlng = new google.maps.LatLng(shape.geometry[j].lat, shape.geometry[j].lng);
                             if ($scope.boundaries[i].type == 'polygon') {
@@ -518,6 +516,8 @@ angular.module('geoFence', [])
                                 }
                             }
                         }
+                        if (shapeExist == true)
+                            break;
                     }
                     var temp = {
                         geometry: original_geometry,
